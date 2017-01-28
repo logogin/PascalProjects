@@ -1,0 +1,52 @@
+Гол. 3. Найти такое число, оканчивающееся на 5, что, умножая его на 5,
+        мы получим новое число, полученное из предыдущего вычеркиванием
+        цифры 5 на конце и приписыванием ее в начале.
+Гол. 4. Извлечь целый квадратный корень с недостатком из очень длинного
+        целого числа (например, содержащего 50 или 100 значащих цифр).
+Гол. 6. Унтер-офицер собирает своих людей, чтобы решить, кого отправить
+        в наряд на картошку.
+        "Постройтесь гуськом и рассчитайтесь, начиная с 2".
+        Первый из стоящих говорит 2, следующий -3, следующий - 4 и т.д.
+        "Первый в ряду, выйди из строя. Ты освобожден от наряда.
+        Какой у тебя номер?"
+        "Второй", - отвечает солдат.
+        "Начиная со второго, расчитаться по два; тем, кому не выпадет 2,
+        выйти из строя; они пойдут в наряд".
+        И процесс возобновляется. Первый из вышедших из строя имеет 
+        номер 3, и он счастлив: он освобожден от наряда. Теперь 
+        рассчитываются по трое, начиная с 3 - с того, кто первым вышел
+        из строя...
+        Составить программу, выписывающую n первых счастливых чисел для
+        большого n (100, даже 500). Внимание: в чем состоит головоломка:
+        каждый член последовательности должен вычисляться, исходя из
+        данных значений предыдущих счастливых чисел. У вас есть i первых,
+        вычислите следующие. Вот первые счастливые числа:
+        2, 3, 5, 7, 11, 13, 17, 23, 25, 29...
+        Счастливые числа - не обязательно простые, а простые числа -
+        не обязательно счастливые...
+Гол. 8. SEND + MORE = MONEY. Это - лаконичная телеграмма английского 
+        студента своему отцу. История умалчивает о том, как отей это
+        принял и были ли отрпавлены деньги...
+        Напишите программу, которая разгадывает эту головоломку.
+        
+
+*1.Chess-board.
+   Write program, which whill recognize if it is possibl to place
+   given count of crowns and knights on a chess-board. Men must be
+   placed that they are not threatening each other. If the program
+   will find out some solutions, it should display at least one of
+   them. In addition to count of men program lets you input a number
+   of columns (A-Z) and rows (1-26) of chess-board.
+   
+*2.Dice.
+   Write progran which will simulate throwing the dice.
+   * Screen show the side to enclosed box, in which a cube will fly
+     from the right top corner.
+   * The throw will be started by pressing and releasing of the defined
+     key. Velocity at the beginning of motion will refer to period of 
+     holding this key down.
+   * The dice has a shape of opaque cube with drawn point values on its
+     sides.
+   * Space position of the cube in the moment of penetrating to box
+     will be random.
+

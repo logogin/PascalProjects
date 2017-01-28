@@ -1,0 +1,55 @@
+─ RU.DELPHI (2:4624/69.16) ──────────────────────────────────────── RU.DELPHI ─
+ Msg  : 671 of 699
+ From : smirnoff@stu.ru                     2:5020/400      22 Sep 00  06:59:28
+ To   : All                                                 25 Sep 00  08:23:10
+ Subj : TaskBarButton
+───────────────────────────────────────────────────────────────────────────────
+From: "Paul Smirnoff" <smirnoff@stu.ru>
+
+Vlad Negrutsa пишет
+
+>        Может кто знает как убрать кнопку приложения из TaskBar...
+
+==== кусь http://full.hotmail.ru ====
+Q: Как можно убpать задачу из Taskbara?
+Вариант 1:
+{$R *.RES}
+var
+ ExtendedStyle : integer;
+begin
+  Application.Initialize;
+  ExtendedStyle:=GetWindowLong(application.Handle, GWL_EXSTYLE);
+    SetWindowLong(Application.Handle, GWL_EXSTYLE,
+                  ExtendedStyle or WS_EX_TOOLWINDOW);
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+end.
+
+Вариант 2:
+procedure TForm1.TaskBarSwitch(Sender: TObject);
+ var
+   WnHnd   : Integer;
+ begin
+   WnHnd := GetWindowLong(Application.Handle, GWL_EXSTYLE);
+   if (WnHnd and WS_EX_TOOLWINDOW) = WS_EX_TOOLWINDOW
+ then
+     WnHnd := WnHnd - WS_EX_TOOLWINDOW
+   else
+     WnHnd := WnHnd or WS_EX_TOOLWINDOW;
+   Application.MainForm.Hide;
+   SetWindowLong(Application.Handle, GWL_EXSTYLE, WnHnd);
+   Application.MainForm.Show;
+ end;
+
+=== наелся http://full.hotmail.ru ===
+
+----
+С уважением     Paul Smirnoff
+---------
+Одни с годами умнеют, другие становятся старше
+
+
+
+--- ifmail v.2.15dev5
+ * Origin: Siberian state transport university (2:5020/400)
+

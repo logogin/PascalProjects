@@ -1,0 +1,105 @@
+─ RU.DELPHI (2:4624/69.16) ──────────────────────────────────────── RU.DELPHI ─
+ Msg  : 686 of 699
+ From : alexboiko@mtu-net.ru                2:5020/400      11 Sep 00  09:41:21
+ To   : All                                                 11 Sep 00  12:21:33
+ Subj : Re: "Активизация" окна - итоги.
+───────────────────────────────────────────────────────────────────────────────
+From: "Alex Boiko" <alexboiko@mtu-net.ru>
+
+
+"Sergey Minin" <Sergey.Minin@p40.f30.n5012.z2.fidonet.org> wrote in message
+news:968451665@p40.f30.n5012.z2.FIDOnet.ftn...
+
+>  Hасколько я понимаю ответ на данный вопpос не был найден, по кpайней меpе
+
+для
+
+>Win98. Пpи обсуждение этой пpоблемы очень много возникало вопpосов нужно ли
+
+это
+
+>вообще (мол очень это неэстетично и опасно), дабы pазвеять эти сомнения
+
+пpиведу
+
+>свою пpоблему: у пpиложения нет индикатоpа задачи в TaskBar, но есть TryIcon,
+>отсюда пpоблема как можно пpи нажатии на TryIcon активизиpовать окно
+
+(пеpедать
+
+>фокус ввода и вытащить навеpх, у некотоpых людей возникало желание только
+
+У меня все прекрасно вылезает и получает фокус и под Win98 (обычной и SE),
+и под WinME, и под Win2000. По моему ничего особенного не делаю. непонятно что
+за
+проблемы у тебя. А то что Microsoft так сделало SetForegroundWindow так что
+активное приложение не должно фокус терять - так это к клику по трею не
+относится
+imho т.к. при клике оно фокус потеряет в любом случае уже просто в результате
+клика. Короче у меня все работает, вот кусок из программы:
+
+procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  if ShutDown then CanClose := true else
+  begin
+    CanClose := false;
+    Application.Minimize;
+  end;
+end;
+
+procedure TForm1.AppMinimize(Sender: TObject);
+begin
+  ShowWindow(Application.Handle, SW_HIDE);
+end;
+
+procedure TForm1.TrayClick;
+begin
+  ShowWindow(Application.Handle, SW_SHOW);
+  Application.Restore;
+  Application.BringToFront;
+end;
+
+procedure TForm1.WndProcNew(var Msg: TMessage);
+var
+  P : TPoint;
+begin
+  try
+    with Msg do
+    begin
+      if Msg = WM_QUERYENDSESSION then
+      begin
+        ShutDown := true;
+        Result := 1;
+        Exit;
+      end;
+
+      if Msg = CM_TRAYICON then // Константа такая - WM_USER + что нибудь;
+      begin
+        if lParam = WM_LBUTTONUP then TrayClick;
+
+        if lParam = WM_RBUTTONUP then
+        begin
+          GetCursorPos(P);
+          SetForegroundWindow(Handle);
+          try
+            PopupMenu1.Popup(P.X, P.Y);
+          finally
+            SetForegroundWindow(Handle);
+          end;
+        end;
+      end;
+      Result := CallWindowProc(FPrevWndProc, Handle, Msg, WParam, LParam);
+    end;
+  except
+    Application.HandleException(Self);
+  end;
+end;
+
+Алексей Бойко
+alexboiko@yahoo.com
+http://alexboiko.da.ru
+
+
+--- ifmail v.2.15dev5
+ * Origin: DRB (2:5020/400)
+

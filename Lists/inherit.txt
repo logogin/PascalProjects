@@ -1,0 +1,95 @@
+─ RU.DELPHI (2:4624/69.16) ──────────────────────────────────────── RU.DELPHI ─
+ Msg  : 555 of 673 -454
+ From : kser@elsov.ru                       2:5020/400      08 Sep 00  11:26:11
+ To   : Ilya N. Morozov                                     11 Sep 00  08:35:42
+ Subj : Re: Фоpмы
+───────────────────────────────────────────────────────────────────────────────
+From: "Sergey Kabikov" <kser@elsov.ru>
+
+Thu Sep 07 2000 19:11, Ilya N. Morozov wrote to All:
+
+ >> PY>>> 1) pабочyю область экpана (pазpешение минyс таскбаp и пpочие
+ >>  PY>>> панели типа MS Office, ICQ, etc.). Hyжно это для того, чтобы
+ >>  PY>>> центpиpовать окно на экpане, меня пpосто бесят некотоpые пpоги
+ >>  PY>>> на дельфи, котоpые писались в одном pазpешении и пpи запyске в
+ >>  PY>>> дpyгом окно частично yходит за гpаницы.
+  >> Тебе нyжно задавать кооpдинаты твоего окна (SetWindowPos) в зависимости
+
+от
+
+ >> pазницы высот экpана (screen.height) и высоты TaskBar`а (высотy последнего
+ >> нyжно опpеделять чеpез WinAPI GetWindowRect).
+
+Последнее, извините, бредом попахивает.
+
+ >>  PY> пpосто вычесть из pазмеpа экpана pазмеp панели задач мало, т.к. та же
+ >>  PY> аська в каком-то pежиме линкyется к гpанице экpана и как бы окна все
+ >>  PY> стаpаются не залезать в этy область. Коpоче. Мне нyжен тот
+ >>  PY> пpямоyгольник, в котоpый pаспахивается окно пpи максимизации.
+
+Вот это ближе.
+
+ IM> А можно попробывать так:
+
+=8-(  ) 
+ТАК попробЫвать лучше не надо!
+
+ IM> А вообще есть книженция А.Я Архангельский "Программитоа-вание в Delphi5",
+ IM> рекомендую!
+
+Да-да, Илья, продолжайте читать. 
+
+Теперь к сути.
+Получить клиентскую область экрана (минус таскбар и т.п.) можно функцией АПИ
+SystemParametersInfo с флагом SPI_GETWORKAREA (читайте хелп по Win32 АПИ).
+
+Особое предложение дня - процедура, центрирующая форму по другой форме (или
+любому контролу на другой форме) с "оттеснением" от краев экрана :
+
+procedure InheritPosition(ThisControl, BaseControl : TControl);
+const MinGap = 10;
+var Arg, Area  : TRect;
+begin
+   if BaseControl = nil
+    then Arg := Bounds((Screen.Width  - ThisControl.Width)  DIV 2,
+                       (Screen.Height - ThisControl.Height) DIV 2,
+                       ThisControl.Width, ThisControl.Height)
+    else with BaseControl do
+     Arg := Bounds(Left + ((Width  - ThisControl.Width)  DIV 2),
+                   Top  + ((Height - ThisControl.Height) DIV 2),
+                   ThisControl.Width, ThisControl.Height);
+   if NOT SystemParametersInfo(SPI_GETWORKAREA, 0, @Area, 0) // from RxLib,
+    then Area := Bounds(0, 0, Screen.Width, Screen.Height);  //  VCLUtils.pas
+   ThisControl.BoundsRect := BoundRect(Arg, GetRectClientArea(Area, MinGap));
+end;
+
+где:
+function BoundRect(const Arg, Area : TRect) : TRect;
+begin
+  with Arg do
+   Result := Bounds(BoundValue(Left, Area.Left, Area.Right  - Right + Left),
+                    BoundValue(Top,  Area.Top,  Area.Bottom - Bottom + Top),
+                    Right - Left, Bottom - Top);
+end;
+
+и, соответственно :
+function BoundValue(Arg, aMin, aMax : integer) : integer;
+begin
+   Result := Arg;
+   if aMax < aMin then begin           // This behavour is used by
+      Result := (aMin + aMax) DIV 2;   //  BoundLine, don't change it!
+   end else begin
+      if Result < aMin then Result := aMin;
+      if Result > aMax then Result := aMax;
+   end;
+end;
+
+Давно и безотказно работает. Если возникнут проблемы - охотно приму багрепорт.
+
+ORIGIN (especially for IM) Если можешь не сказать - промолчи.
+
+WBR, Сергей
+
+--- ifmail v.2.15dev5
+ * Origin: FidoNet Online - http://www.fido-online.com (2:5020/400)
+
